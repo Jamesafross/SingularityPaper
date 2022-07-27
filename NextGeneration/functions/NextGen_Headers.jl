@@ -1,0 +1,7 @@
+include("NextGen_DEFunctions.jl")
+include("NextGen_WindowsRunFunc.jl")
+include("NextGen_Structures.jl")
+include("NextGen_Stability.jl")
+include("NextGen_Functions.jl")
+include("NextGen_Setup.jl")
+include("NextGen_RunNetworkFunc.jl")
