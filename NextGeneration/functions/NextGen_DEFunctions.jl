@@ -35,7 +35,7 @@
        
         if  t >= tP && adapt == "on"
               
-            solverStruct.κS.κSEEv[i],solverStruct.κS.κSIEv[i],solverStruct.κS.κSEIv[i],solverStruct.κS.κSIIv[i] = adapt_local_func(h,hparams,t,κS,NGp,u[i],u[i+N],i,N,LearningRate)
+            solverStruct.κS.κSEEv[i],solverStruct.κS.κSIEv[i],solverStruct.κS.κSEIv[i],solverStruct.κS.κSIIv[i] = adapt_local_func2(h,hparams,t,κS,NGp,u[i],u[i+N],i,N,LearningRate)
 
             if i == N    
                 if mod(runPars.counter,10) == 0
@@ -46,7 +46,7 @@
                     solverStruct.wS.κSIIv[:,wS.count] = solverStruct.κS.κSIIv
                     solverStruct.wS.count += 1
                 end
-                #nP.W = adapt_global_coupling(hparams,N,W,lags,h,t,u,minSC,W_sum)
+                solverStruct.nP.W = adapt_global_coupling(hparams,N,W,lags,h,t,u,minSC,W_sum)
                 solverStruct.adaptPars.tP += 0.01  
                 solverStruct.adaptPars.tP = round(adaptPars.tP ,digits=2)
                 solverStruct.runPars.counter += 1
@@ -60,7 +60,7 @@
         #rI
         du[i+N] =(1. /τI)*(-gIE*rI - gII*rI -κVIE*rI - κVII*rI + 2. * rI * vI + (ΔI / (τI*pi)))
         #vE
-        du[i+2N] =(1. /τE)*(gEE*(VsynEE - vE) + gEI*(VsynEI - vI) + κVEI*(vI - vE) - (τE^2)*(pi^2) * (rE^2.) +  vE^2. + η_0E +stim(t,i,stimNodes,Tstim,nWindow,stimOpt,stimWindow,stimStr))
+        du[i+2N] =(1. /τE)*(gEE*(VsynEE - vE) + gEI*(VsynEI - vI) + κVEI*(vI - vE) - (τE^2)*(pi^2) * (rE^2.) +  vE^2. + η_0E )
         #vI
         du[i+3N] =(1. /τI)*(gIE*(VsynIE - vE) + gII*(VsynII - vI) + κVIE*(vE - vI) - (τI^2)*(pi^2)* (rI^2.) + vI^2. + η_0I)
         #gEE

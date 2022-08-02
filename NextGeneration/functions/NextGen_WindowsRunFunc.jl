@@ -2,15 +2,18 @@ function nextgen_model_windows_run()
    @unpack NGp,nP,bP,IC,κS,wS,stimOpts,runOpts,solverOpts,runPars,adaptPars,nRuns,timer = solverStruct
    @unpack W, dist,lags,N,minSC,W_sum = nP
    @unpack stimOpt,stimWindow,stimNodes,stimStr,Tstim = stimOpts
-   @unpack modeSwitch,tWindows,nWindows = runOpts
+   @unpack tWindows,nWindows,perturbWindow,mode = runOpts
    @unpack delays,plasticity,adapt,synapses = solverOpts
    @unpack LearningRate,windowStart,tP,HIST = adaptPars
-  
+   println("κ = ", solverStruct.NGp.κ)
+   
+ 
     BOLD_saveat = collect(0:1.6:tWindows)
     size_out = length(BOLD_saveat)
     BOLD_out = zeros(N,size_out,nWindows)
-    
+       
     for j = 1:nWindows
+
         
         global nWindow = j
        
@@ -33,7 +36,7 @@ function nextgen_model_windows_run()
         end
 
         if plasticity == "on"
-            if j < windowStart && modeSwtich == normal
+            if j < windowStart
                 global solverStruct.solverOpts.adapt = "off"
             else
                 global solverStruct.solverOpts.adapt = "on"
@@ -42,12 +45,11 @@ function nextgen_model_windows_run()
        
         tspan = (0.0,tWindows)
         adpStops = collect(0.01:0.01:tWindows)
+        
 
-        if modeSwitch == "perturbed" && j == perturbWindow
-            perturbSC!(solverStruct.nP.W,0.01)
+        if runOpts.mode == "perturb" && j == runOpts.perturbWindow 
+            perturbW!(solverStruct.nP.W,0.05) 
         end
-
-      
     
         if lowercase(delays) == "on"
             probDDE = nextgen
@@ -107,7 +109,7 @@ function nextgen_model_windows_run()
 
        
         BOLD_out[:,:,j] = out
-    
+
     end
 
     return BOLD_out

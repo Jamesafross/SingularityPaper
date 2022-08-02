@@ -14,7 +14,9 @@ function setup(numThreads,nWindows,tWindows;delays="on",plasticity="on",n_Runs=1
     tPrev = 0.01
     timeAdapt = 0.02
     startWindow = 5
-    modeSwitch = [normal, perturbed]
+    perturbWindow = 10
+    mode = "rest"
+
    
     
     if lowercase(plasticity) == "on"
@@ -30,13 +32,13 @@ function setup(numThreads,nWindows,tWindows;delays="on",plasticity="on",n_Runs=1
     κSIIv = ones(N)*NGp.κSII
     κSUM = κSEEv[1]+κSIEv[1]+κSEIv[1]+κSIIv[1]
 
-    init0 = make_init_conds(NGp,N)  + 0.1*rand(8N)
+    init0 = round.(make_init_conds(NGp,N),digits=4)
 
     nP = NetworkParameters(W, dist,lags, N, minSC,W_sum)
     bP = balloonModelParameters()
 
-    LR = 0.01 # learning rate adaptation
-    IC =  init(init0)
+    LR = 0.0001 # learning rate adaptation
+    IC = init(init0)
     κS = weights(κSEEv, κSIEv, κSEIv, κSIIv, κSUM )
     wS = weightSave(zeros(N,nSave),zeros(N,nSave),zeros(N,nSave),zeros(N,nSave),1)
    
@@ -45,7 +47,7 @@ function setup(numThreads,nWindows,tWindows;delays="on",plasticity="on",n_Runs=1
     nRuns = n_Runs
     timer = TimerStruct(0.,0.,0.)
     stimOpts = StimOptions(stimOpt,stimWindow,stimNodes,stimStr,Tstim)
-    runOpts = RunOptions(tWindows,nWindows,modeSwitch)
+    runOpts = RunOptions(tWindows,nWindows,perturbWindow,mode)
     solverOpts =  SolverOptions(delays,plasticity,adapt,synapses)
     runPars = RunParameters(tPrev,timeAdapt,0,WHISTMAT,d)
     adaptPars = adaptParameters(LR,startWindow,10.01,IC.u0[1:N])
@@ -53,6 +55,11 @@ function setup(numThreads,nWindows,tWindows;delays="on",plasticity="on",n_Runs=1
     solverStruct = NextGenSolverStruct(NGp,nP,bP,IC,κS,wS,stimOpts,runOpts,solverOpts,runPars,adaptPars,nRuns,timer)
 
    
+  
+
+ 
+
+
     return solverStruct
 
 end

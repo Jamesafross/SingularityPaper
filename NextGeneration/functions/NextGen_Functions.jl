@@ -12,18 +12,15 @@ function adapt_global_coupling(hparams,N::Int64,W::Matrix{Float64},lags::Matrix{
                 end
                 if W[jj,ii] < minSC
                     W[jj,ii] = minSC
-                elseif W[jj,ii] > 0.11
-                    W[jj,ii] = 0.11
                 end
             end
         
         end
        
         
-        if sum(W[:,ii]) != 0.0
-        @views W[:,ii] = W_sum[ii].*(W[:,ii]./sum(W[:,ii]))
-        end
+        
         W[W .< 0.0] .= 0.0
+        W = W./maximum(W)
 
     end
 
@@ -83,6 +80,32 @@ function adapt_local_func(h,hparams,t,κS,NGp,rE,rI,i,N,c;type = "lim")
 
     return κSEEv[i],κSIEv[i],κSEIv[i],κSIIv[i]
 end
+
+
+function adapt_local_func2(h,hparams,t,κS,NGp,rE,rI,i,N,c;type = "lim")
+    @unpack ΔE,ΔI,η_0E,η_0I,τE,τI,αEE,αIE,αEI,αII,κSEE,κSIE,κSEI,
+    κSII,κVEE,κVIE,κVEI,κVII,VsynEE,VsynIE,VsynEI,VsynII,κ = NGp
+    @unpack κSEEv,κSIEv,κSEIv,κSIIv,κSUM = κS
+    
+    ΔκSEE = c*rE*(rE - h(hparams,t-1.0;idxs = i))
+    ΔκSIE = c*rE*(rI - h(hparams,t-1.0;idxs = i+N))
+    ΔκSEI = c*rI*(rE - h(hparams,t-1.0;idxs = i))
+    ΔκSII = c*rI*(rI - h(hparams,t-1.0;idxs = i+N))
+
+    κSEEv[i] = (κSEEv[i] + ΔκSEE*adapt_contain_function(ΔκSEE,κSEE))
+    κSIEv[i] = (κSIEv[i] + ΔκSIE*adapt_contain_function(ΔκSIE,κSIE))
+    κSEIv[i] = (κSEIv[i] + ΔκSEI*adapt_contain_function(ΔκSEI,κSEI))
+    κSIIv[i] = (κSIIv[i] + ΔκSII*adapt_contain_function(ΔκSII,κSII))
+    
+  
+
+return κSEEv[i],κSIEv[i],κSEIv[i],κSIIv[i]
+end
+
+function adapt_contain_function(Δκ,κ)
+    return (exp(-abs( κ + (Δκ))))
+end
+
 
 
 function adapt_local_func_nodelay(κS,NGp,rE,rI,i,c;type = "lim")
@@ -208,14 +231,20 @@ function V(Z)
     return (1/(τ*pi))*real( (1-conj(Z)) / (1+conj(Z)) )
 end
 
-perturbSC!(W,c)
-    N = size(W,1)
-    for i = 1:N
-        for j = 1:N
-            W[i,j] = W[i,j] + c*randn()
+function perturbW!(W,a)
+    for i = 1:size(W,1)
+        for j = 1:size(W,1)
+            if W[i,j] > 0.0
+                Wij = W[i,j] + a*randn()
+                while Wij < 0.0
+                    Wij = W[i,j] + a*randn()
+                end
+                W[i,j] = Wij
+            end
         end
     end
 end
+
 
 
 

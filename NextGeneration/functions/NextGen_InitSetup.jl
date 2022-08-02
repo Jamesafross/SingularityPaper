@@ -1,6 +1,6 @@
 using LinearAlgebra,MAT,JLD,DifferentialEquations,Plots,Random,NLsolve,Statistics,Parameters,Interpolations
 HOMEDIR=homedir()
-PROGDIR = "$HOMEDIR/COMP_paper"
+PROGDIR = "$HOMEDIR/SingularityPaper"
 WORKDIR="$PROGDIR/NextGeneration"
 BALLOONDIR="$PROGDIR/Balloon_Model"
 InDATADIR="$HOMEDIR/NetworkModels_Data/StructDistMatrices"

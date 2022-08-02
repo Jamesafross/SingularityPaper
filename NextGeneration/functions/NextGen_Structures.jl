@@ -110,7 +110,8 @@ end
 mutable struct RunOptions
     tWindows::Real
     nWindows::Real
-    modeSwitch::Array{String}
+    perturbWindow::Real
+    mode::String
 end
 
 mutable struct SolverOptions
@@ -146,14 +147,17 @@ end
     count::Int
  end
 
-mutable struct NextGenSol
-    BOLD
+mutable struct NextGenSol_rest
+    BOLD_rest
 end
 
+mutable struct NextGenSol_stim
+    BOLD_stim
+end
 
-mutable struct NextGenSol_both
-    BOLD_normal
-    BOLD_perturbed
+mutable struct NextGenSol_reststim
+    BOLD_rest
+    BOLD_stim
 end
 
 mutable struct NextGenSolverStruct
@@ -177,13 +181,6 @@ mutable struct fitStruct
     eta_E0
     kappa
     fit
-end
-
-mutable struct save_state
-    init 
-    hist
-    W
-    initBalloon 
 end
 
  
