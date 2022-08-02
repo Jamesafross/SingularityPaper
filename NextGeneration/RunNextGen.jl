@@ -3,7 +3,7 @@ include("./functions/NextGen_InitSetup.jl")
 
 
 println("Base Number of Threads: ",numThreads," | BLAS number of Threads: ", BLASThreads,".")
-nWindows = 20
+nWindows = 40
 tWindows = 50
 type_SC = "pauldata" #sizes -> [18, 64,140,246,503,673]
 size_SC = 140
@@ -50,7 +50,7 @@ end
 
 run_nextgen()
 
-time_per_second = solverStruct.timer.meanIntegrationTime/tWindows
+time_per_second = solverStruct.timer.meanIntegrationTime/(2*tWindows)
 print(time_per_second)
 
 

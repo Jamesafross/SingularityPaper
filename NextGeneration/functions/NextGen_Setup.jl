@@ -40,7 +40,7 @@ function setup(numThreads,nWindows,tWindows;delays="on",plasticity="on",n_Runs=1
     LR = 0.0001 # learning rate adaptation
     IC = init(init0)
     κS = weights(κSEEv, κSIEv, κSEIv, κSIIv, κSUM )
-    wS = weightSave(zeros(N,nSave),zeros(N,nSave),zeros(N,nSave),zeros(N,nSave),1)
+    wS = weightSave(zeros(N,nSave),zeros(N,nSave),zeros(N,nSave),zeros(N,nSave),zeros(N,N,nSave),zeros(N,N,nSave),1)
    
     WHISTMAT = zeros(N,N)
     d = zeros(N)

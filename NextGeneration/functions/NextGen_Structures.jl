@@ -144,6 +144,8 @@ end
     κSIEv::Array{Real}
     κSEIv::Array{Real}
     κSIIv::Array{Real}
+    SC_rest::Array{Real}
+    SC_perturb::Array{Real}
     count::Int
  end
 

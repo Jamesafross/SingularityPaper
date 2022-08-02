@@ -38,15 +38,22 @@
             solverStruct.κS.κSEEv[i],solverStruct.κS.κSIEv[i],solverStruct.κS.κSEIv[i],solverStruct.κS.κSIIv[i] = adapt_local_func2(h,hparams,t,κS,NGp,u[i],u[i+N],i,N,LearningRate)
 
             if i == N    
+                solverStruct.nP.W = adapt_global_coupling(hparams,N,W,lags,h,t,u,minSC,W_sum)
                 if mod(runPars.counter,10) == 0
                     
                     solverStruct.wS.κSEEv[:,wS.count] = solverStruct.κS.κSEEv
                     solverStruct.wS.κSIEv[:,wS.count] = solverStruct.κS.κSIEv
                     solverStruct.wS.κSEIv[:,wS.count] = solverStruct.κS.κSEIv
                     solverStruct.wS.κSIIv[:,wS.count] = solverStruct.κS.κSIIv
+                    if solverStruct.runOpts == "rest"
+                        solverStruct.wS.SC_rest[:,:,wS.count] = solverStruct.nP.W
+                    else
+                        solverStruct.wS.SC_rest[:,:,wS.count] = solverStruct.nP.W
+                    end
+
                     solverStruct.wS.count += 1
                 end
-                solverStruct.nP.W = adapt_global_coupling(hparams,N,W,lags,h,t,u,minSC,W_sum)
+               
                 solverStruct.adaptPars.tP += 0.01  
                 solverStruct.adaptPars.tP = round(adaptPars.tP ,digits=2)
                 solverStruct.runPars.counter += 1
